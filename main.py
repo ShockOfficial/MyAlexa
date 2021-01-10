@@ -4,10 +4,14 @@ import pywhatkit
 import wikipedia
 import subprocess
 import playsound
+import random
+from os import listdir
+from os.path import isfile, join
 
 def take_comand():
     listener = sr.Recognizer()
     try:
+
         with sr.Microphone() as source:
 
             voice = listener.listen(source)
@@ -60,6 +64,7 @@ def skills(command):
 
     elif "wyszukaj" in command or "szukaj" in command or "google" in command:
         command = command.replace("wyszukaj","")
+        command = command.replace("szukaj","")
         respsond = "Dobrze, szukam w google."
         pywhatkit.search(command)
 
@@ -98,6 +103,27 @@ def skills(command):
     #     playsound.playsound("C:\\Users\\pawci\\Desktop\\Piosenki\\Kortez - Pierwsza cover Motyka_P.wav")
     #     respsond = "Wyłączam."
 
+    elif "opowiedz mi dowcip" in command or "żart" in command or \
+            "opowiedz mi dowcip" in command or "jeszcze jeden" in command:
+
+        jokes = read_jokes_from_file()
+        funny_songs = [x for x in listdir(r"C:\Users\pawci\Desktop\MyAlexa\funny songs")
+                       if isfile(join(r"C:\Users\pawci\Desktop\MyAlexa\funny songs", x))]
+        index = random.randint(0,len(jokes) - 1)
+        index_song = random.randint(0,len(funny_songs) - 1)
+        while index in processed_jokes:
+            index = random.randint(0,len(jokes) - 1)
+
+
+        print("[Alexa]: Dobra słuchaj tego!")
+        talk("Dobra słuchaj tego!")
+        print("[Alexa]:",jokes[index])
+        respsond ='Hahaha!'
+
+        joke = jokes[index]
+        talk(joke)
+        playsound.playsound(fr"C:\Users\pawci\Desktop\MyAlexa\funny songs\{funny_songs[index_song]}")
+        processed_jokes.append(index)
 
 
     return respsond
@@ -114,8 +140,8 @@ def run_alexa():
     if first_time:
         print("[Alexa]:","Słucham...")
         print("[Alexa]:","W czym mogę ci pomóc?")
-        talk("Słucham")
-        talk("W czym moge ci pomóc?")
+        talk("Słucham\nW czym moge ci pomóc?")
+
     else:
         print("[Alexa]:","Co jeszcze mam dla ciebie zrobić?")
         talk("Co jeszcze mam dla ciebie zrobić?")
@@ -126,9 +152,22 @@ def run_alexa():
     print("[Alexa]:",respond)
     talk(respond)
 
+def read_jokes_from_file():
+    jokes = []
+    with open("jokes.txt", encoding="UTF-8") as file:
+
+        message = ""
+        for i in file:
+
+            if i != "$\n":
+                message += i
+            else:
+                jokes.append(message)
+                message = ""
+    return jokes
 
 first_time = True
-
+processed_jokes = []
 while True:
 
     if first_time:
