@@ -1,7 +1,8 @@
-from os import listdir
-from os.path import isfile, join
+from datetime import date
 
-funny_songs = [x for x in listdir(r"C:\Users\pawci\Desktop\MyAlexa\funny songs")
-               if isfile(join(r"C:\Users\pawci\Desktop\MyAlexa\funny songs", x))]
+init_date = date(2020, 1, 5)
+today = date.today()
 
-print(funny_songs)
+alexa_age = today - init_date
+lat = alexa_age.days // 365
+print(lat)
